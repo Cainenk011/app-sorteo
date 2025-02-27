@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Aplicación de Sorteo UNLaR</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <div class="area">
+        <ul class="circles">
+            <li></li>
+            <li></li>
+            <li></li>
+            <li></li>
+            <li></li>
+            <li></li>
+            <li></li>
+            <li></li>
+            <li></li>
+            <li></li>
+        </ul>
+    </div>
+    <div class="content">
+        <div class="background-logo"></div>
+        
+        <!-- Contenedor de los logos -->
+        <div class="logos-container">
+            <img class="logo" src="img/logo-ssi-2.png" alt="Subsecretaría de Informática - UNLaR">
+            <img class="logo" src="img/logo-unlar.png" alt="Logo Secundario">
+        </div>
+
+        <h1>Sorteo</h1>
+
+        <div class="container">
+            <h2>Añadir participante</h2>
+            <div class="input-section">
+                <input type="text" id="name-input" placeholder="Nombre y apellido">
+                <button id="add-btn">Añadir</button>
+            </div>
+
+            <div class="names-list">
+                <div class="names-list-header">
+                    <span>Participantes para el sorteo</span>
+                    <span class="names-list-info" id="participant-count">0 participantes</span>
+                    <button id="clear-all-btn">Borrar todos</button>
+                </div>
+                <div id="names-container"></div>
+                <div id="pagination-container" class="pagination" style="display: none;"></div>
+            </div>
+
+            <button id="sortear-btn" disabled>SORTEAR</button>
+
+            <div class="json-section">
+                <h2>Cargar desde JSON</h2>
+                <textarea id="json-input" placeholder='Ejemplo: ["Juan Pérez", "María Gómez"]'></textarea>
+                <button id="load-json-btn">Cargar participantes</button>
+                <div id="loading" class="loading">Procesando datos</div>
+            </div>
+
+            <div class="result-section" id="result-section" style="display: none;">
+                <h2>Resultado del Sorteo</h2>
+                <ol id="result-list"></ol>
+                <div id="result-pagination" class="pagination" style="display: none;"></div>
+            </div>
+        </div>
+    </div>
+
+    <script src="script.js"></script>
+</body>
+</html>
+
