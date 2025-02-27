@@ -26,42 +26,44 @@
         
         <!-- Contenedor de los logos -->
         <div class="logos-container">
-            <img class="logo" src="img/logo-ssi-2.png" alt="Subsecretaría de Informática - UNLaR">
-            <img class="logo" src="img/logo-unlar.png" alt="Logo Secundario">
+            <!--<img class="logo" src="img/logo-ssi-2.png" alt="Subsecretaría de Informática - UNLaR">
+            <img class="logo" src="img/logo-unlar.png" alt="Logo Secundario">-->
+            <img class="logo" src="./img/img.jpeg" alt="Subsecretaría de Informática - UNLaR">
         </div>
 
-        <h1>Sorteo</h1>
+        <h1>Sorteo Tribunal Académico</h1>
 
         <div class="container">
-            <h2>Añadir participante</h2>
-            <div class="input-section">
+            <!--<h2>Añadir participante</h2>-->
+            <!--<div class="input-section">
                 <input type="text" id="name-input" placeholder="Nombre y apellido">
                 <button id="add-btn">Añadir</button>
+            </div>-->
+            <div class="json-section">
+                <h2>Nóminas de Docentes para Tribunal Académico</h2>
+                <textarea id="json-input" placeholder='Ejemplo: ["Juan Pérez", "María Gómez"]'></textarea>
+                <button id="load-json-btn">Cargar docentes</button>
+                <div id="loading" class="loading">Procesando datos</div>
             </div>
-
+            <div class="names-list-header">
+                <span>Participantes para el sorteo</span>
+                <span class="names-list-info" id="participant-count">0 participantes</span>
+                <button id="clear-all-btn">Borrar todos</button>
+            </div>
             <div class="names-list">
-                <div class="names-list-header">
-                    <span>Participantes para el sorteo</span>
-                    <span class="names-list-info" id="participant-count">0 participantes</span>
-                    <button id="clear-all-btn">Borrar todos</button>
-                </div>
+                
                 <div id="names-container"></div>
                 <div id="pagination-container" class="pagination" style="display: none;"></div>
             </div>
 
             <button id="sortear-btn" disabled>SORTEAR</button>
 
-            <div class="json-section">
-                <h2>Cargar desde JSON</h2>
-                <textarea id="json-input" placeholder='Ejemplo: ["Juan Pérez", "María Gómez"]'></textarea>
-                <button id="load-json-btn">Cargar participantes</button>
-                <div id="loading" class="loading">Procesando datos</div>
-            </div>
+
 
             <div class="result-section" id="result-section" style="display: none;">
                 <h2>Resultado del Sorteo</h2>
                 <ol id="result-list"></ol>
-                <div id="result-pagination" class="pagination" style="display: none;"></div>
+            <!--<div id="result-pagination" class="pagination" style="display: none;"></div>-->
             </div>
         </div>
     </div>

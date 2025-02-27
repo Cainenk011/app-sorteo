@@ -116,7 +116,7 @@ document.addEventListener('DOMContentLoaded', () => {
             nameText.textContent = participant;
             nameItem.appendChild(nameText);
             
-            // Botón de eliminar
+            // Btn eliminar
             const deleteBtn = document.createElement('button');
             deleteBtn.className = 'delete-btn';
             deleteBtn.textContent = 'Eliminar';
@@ -136,13 +136,17 @@ document.addEventListener('DOMContentLoaded', () => {
         const startIdx = (resultCurrentPage - 1) * ITEMS_PER_PAGE;
         const endIdx = Math.min(startIdx + ITEMS_PER_PAGE, sorteoResultados.length);
         
-        for (let i = startIdx; i < endIdx; i++) {
+        for (let i = startIdx; i < 6; i++) {
             const li = document.createElement('li');
-            li.textContent = sorteoResultados[i];
+            li.textContent = sorteoResultados[i] + " ---> SUPLENTE";
+            if(i<3){
+                li.textContent = sorteoResultados[i] + " ---> TITULAR";
+            }
+            
             resultList.appendChild(li);
         }
         
-        crearPaginacion(resultPagination, sorteoResultados.length, ITEMS_PER_PAGE, resultCurrentPage, mostrarResultados);
+        //crearPaginacion(resultPagination, sorteoResultados.length, ITEMS_PER_PAGE, resultCurrentPage, mostrarResultados);
     }
 
     // Agregar participante
@@ -187,9 +191,9 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     }
 
-    // Cargar participantes desde JSON
+    // manejo de objetos-se extrae el contenido del json
     function cargarDesdeJson() {
-        const jsonText = jsonInput.value.trim();
+        const jsonText = jsonInput.value.trim(); //si esta vacio detenemos y mostramos alerta
         if (!jsonText) {
             alert('Por favor, introduce datos JSON válidos.');
             return;
@@ -198,7 +202,6 @@ document.addEventListener('DOMContentLoaded', () => {
         loadingIndicator.style.display = 'block';
         loadJsonBtn.disabled = true;
 
-        // Usar setTimeout para permitir que la UI se actualice antes de procesar
         setTimeout(() => {
             try {
                 let datosJSON;
@@ -207,19 +210,18 @@ document.addEventListener('DOMContentLoaded', () => {
                     // Intentar analizar como array JSON
                     datosJSON = JSON.parse(jsonText);
                 } catch (e) {
-                    // Si falla, intentar limpiar el string y analizar de nuevo
+                    // Si falla limpia el string y analizar de nuevo
                     const cleanedText = jsonText
                         .replace(/\n/g, '')
                         .replace(/\r/g, '')
                         .replace(/\t/g, '')
                         .replace(/\\/g, '\\\\')
-                        .replace(/(")?([a-zA-Z0-9_]+)(")?:/g, '"$2":'); // Asegurarse que las claves tengan comillas
+                        .replace(/(")?([a-zA-Z0-9_]+)(")?:/g, '"$2":'); 
                     datosJSON = JSON.parse(cleanedText);
                 }
                 
-                // Verificar estructura y transformar datos si es necesario
                 if (Array.isArray(datosJSON)) {
-                    // Si es un array, comprobar si son strings o objetos
+                   
                     if (datosJSON.length > 0) {
                         if (typeof datosJSON[0] === 'string') {
                             // Es un array de strings, lo usamos directamente
@@ -237,7 +239,6 @@ document.addEventListener('DOMContentLoaded', () => {
                                 
                                 // Agregar apellido si existe
                                 if (item.apellido) {
-                                    // Añadir espacio solo si ya hay un nombre
                                     if (nombreCompleto) nombreCompleto += ' ';
                                     nombreCompleto += item.apellido;
                                 }
@@ -246,10 +247,9 @@ document.addEventListener('DOMContentLoaded', () => {
                                 if (item.dni) {
                                     // Añadir espacio solo si hay texto previo
                                     if (nombreCompleto) nombreCompleto += ' ';
-                                    nombreCompleto += `DNI: ${item.dni}`;
+                                    nombreCompleto += ` -- DNI: ${item.dni}`;
                                 }
                                 
-                                // Si no se encontró ningún campo específico, usar propiedades genéricas
                                 if (!nombreCompleto) {
                                     const parts = [];
                                     for (const key in item) {
@@ -265,7 +265,7 @@ document.addEventListener('DOMContentLoaded', () => {
                         }
                     }
                 } else if (typeof datosJSON === 'object' && datosJSON !== null) {
-                    // Si es un objeto, intentamos extraer valores
+                    // Si es un objeto extraemos valores
                     participantes = Object.values(datosJSON)
                         .filter(val => typeof val === 'string' || typeof val === 'number')
                         .map(val => String(val));
@@ -288,17 +288,15 @@ document.addEventListener('DOMContentLoaded', () => {
 
     // Realizar sorteo
     function realizarSorteo() {
-        // Algoritmo Fisher-Yates para mezclar eficientemente
         const participantesAleatorios = [...participantes];
         let currentIndex = participantesAleatorios.length;
 
-        // Mientras queden elementos a mezclar
+
         while (currentIndex !== 0) {
-            // Elegir un elemento restante
+
             const randomIndex = Math.floor(Math.random() * currentIndex);
             currentIndex--;
 
-            // Intercambiar con el elemento actual
             [participantesAleatorios[currentIndex], participantesAleatorios[randomIndex]] = 
             [participantesAleatorios[randomIndex], participantesAleatorios[currentIndex]];
         }
@@ -308,11 +306,9 @@ document.addEventListener('DOMContentLoaded', () => {
         mostrarResultados();
         resultSection.style.display = 'block';
         
-        // Desplazar hacia abajo para ver resultados
         resultSection.scrollIntoView({ behavior: 'smooth' });
     }
 
-    // Event listeners
     addBtn.addEventListener('click', agregarParticipante);
     nameInput.addEventListener('keypress', event => {
         if (event.key === 'Enter') {
