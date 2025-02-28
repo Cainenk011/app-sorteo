@@ -136,8 +136,8 @@ document.addEventListener('DOMContentLoaded', () => {
         // Verificar si hay resultados
         console.log("Mostrando resultados. Total:", sorteoResultados.length);
         
-        // Modificado para mostrar solo 6 elementos
-        for (let i = 0; i < 6 && i < sorteoResultados.length; i++) {
+        // Modificado para mostrar solo 8 elementos
+        for (let i = 0; i < 8 && i < sorteoResultados.length; i++) {
             const li = document.createElement('li');
             
             // Clasificar como TITULAR o SUPLENTE
