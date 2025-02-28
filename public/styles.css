@@ -321,6 +321,17 @@ button:active {
     box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
 }
 
+#result-list li.titular {
+    background-color: #c8e6ff;
+    border-left: 4px solid #00529b;
+    font-weight: bold;
+}
+
+#result-list li.suplente {
+    background-color: #f0f0f0;
+    border-left: 4px solid #6c757d;
+}
+
 /* Paginación */
 .pagination {
     display: flex;

@@ -4,9 +4,9 @@ document.addEventListener('DOMContentLoaded', () => {
     let currentPage = 1, resultCurrentPage = 1;
     let sorteoResultados = [];
 
-    // elementos DOM
-    const nameInput = document.getElementById('name-input');
-    const addBtn = document.getElementById('add-btn');
+    // elementos DOM - Verificar que todos los elementos estén correctamente seleccionados
+    const nameInput = document.getElementById('name-input'); // Puede que esto no exista en tu HTML actual
+    const addBtn = document.getElementById('add-btn'); // Puede que esto no exista en tu HTML actual
     const namesContainer = document.getElementById('names-container');
     const participantCount = document.getElementById('participant-count');
     const paginationContainer = document.getElementById('pagination-container');
@@ -17,7 +17,7 @@ document.addEventListener('DOMContentLoaded', () => {
     const loadingIndicator = document.getElementById('loading');
     const resultSection = document.getElementById('result-section');
     const resultList = document.getElementById('result-list');
-    const resultPagination = document.getElementById('result-pagination');
+    const resultPagination = document.getElementById('result-pagination'); // Puede que esto no exista en tu HTML
 
     // Actualiza participantes
     function actualizarContadorParticipantes() {
@@ -116,7 +116,7 @@ document.addEventListener('DOMContentLoaded', () => {
             nameText.textContent = participant;
             nameItem.appendChild(nameText);
             
-            // Btn eliminar
+            // Botón de eliminar
             const deleteBtn = document.createElement('button');
             deleteBtn.className = 'delete-btn';
             deleteBtn.textContent = 'Eliminar';
@@ -133,24 +133,41 @@ document.addEventListener('DOMContentLoaded', () => {
     function mostrarResultados() {
         resultList.innerHTML = '';
         
-        const startIdx = (resultCurrentPage - 1) * ITEMS_PER_PAGE;
-        const endIdx = Math.min(startIdx + ITEMS_PER_PAGE, sorteoResultados.length);
+        // Verificar si hay resultados
+        console.log("Mostrando resultados. Total:", sorteoResultados.length);
         
-        for (let i = startIdx; i < 6; i++) {
+        // Modificado para mostrar solo 6 elementos
+        for (let i = 0; i < 6 && i < sorteoResultados.length; i++) {
             const li = document.createElement('li');
-            li.textContent = sorteoResultados[i] + " ---> SUPLENTE";
-            if(i<3){
-                li.textContent = sorteoResultados[i] + " ---> TITULAR";
-            }
+            
+            // Clasificar como TITULAR o SUPLENTE
+            let estado = i < 3 ? "TITULAR" : "SUPLENTE";
+            
+            li.textContent = `${estado}: ${sorteoResultados[i]}`;
+            console.log(`Agregando ${estado}: ${sorteoResultados[i]}`);
+            
+            // Agregar clase CSS para estilizar diferente según tipo
+            li.className = i < 3 ? 'titular' : 'suplente';
             
             resultList.appendChild(li);
         }
         
-        //crearPaginacion(resultPagination, sorteoResultados.length, ITEMS_PER_PAGE, resultCurrentPage, mostrarResultados);
+        // Revisar si resultPagination existe antes de intentar ocultarlo
+        if (resultPagination) {
+            console.log("Ocultando paginación de resultados");
+            resultPagination.style.display = 'none';
+        } else {
+            console.log("El elemento resultPagination no existe");
+        }
+        
+        // Asegurar que la sección de resultados sea visible
+        resultSection.style.display = 'block';
     }
 
-    // Agregar participante
+    // Agregar participante (si existe el campo en el HTML)
     function agregarParticipante() {
+        if (!nameInput) return; // Salir si no existe el elemento
+        
         const nombre = nameInput.value.trim();
         if (nombre !== '') {
             participantes.push(nombre);
@@ -191,9 +208,9 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     }
 
-    // manejo de objetos-se extrae el contenido del json
+    // Cargar participantes desde JSON
     function cargarDesdeJson() {
-        const jsonText = jsonInput.value.trim(); //si esta vacio detenemos y mostramos alerta
+        const jsonText = jsonInput.value.trim();
         if (!jsonText) {
             alert('Por favor, introduce datos JSON válidos.');
             return;
@@ -202,6 +219,7 @@ document.addEventListener('DOMContentLoaded', () => {
         loadingIndicator.style.display = 'block';
         loadJsonBtn.disabled = true;
 
+        // Usar setTimeout para permitir que la UI se actualice antes de procesar
         setTimeout(() => {
             try {
                 let datosJSON;
@@ -210,18 +228,19 @@ document.addEventListener('DOMContentLoaded', () => {
                     // Intentar analizar como array JSON
                     datosJSON = JSON.parse(jsonText);
                 } catch (e) {
-                    // Si falla limpia el string y analizar de nuevo
+                    // Si falla, intentar limpiar el string y analizar de nuevo
                     const cleanedText = jsonText
                         .replace(/\n/g, '')
                         .replace(/\r/g, '')
                         .replace(/\t/g, '')
                         .replace(/\\/g, '\\\\')
-                        .replace(/(")?([a-zA-Z0-9_]+)(")?:/g, '"$2":'); 
+                        .replace(/(")?([a-zA-Z0-9_]+)(")?:/g, '"$2":'); // Asegurarse que las claves tengan comillas
                     datosJSON = JSON.parse(cleanedText);
                 }
                 
+                // Verificar estructura y transformar datos si es necesario
                 if (Array.isArray(datosJSON)) {
-                   
+                    // Si es un array, comprobar si son strings o objetos
                     if (datosJSON.length > 0) {
                         if (typeof datosJSON[0] === 'string') {
                             // Es un array de strings, lo usamos directamente
@@ -239,17 +258,19 @@ document.addEventListener('DOMContentLoaded', () => {
                                 
                                 // Agregar apellido si existe
                                 if (item.apellido) {
+                                    // Añadir espacio solo si ya hay un nombre
                                     if (nombreCompleto) nombreCompleto += ' ';
                                     nombreCompleto += item.apellido;
                                 }
                                 
-                                // Agregar DNI si existe
+                                // Agregar DNI si existe con el nuevo formato
                                 if (item.dni) {
                                     // Añadir espacio solo si hay texto previo
                                     if (nombreCompleto) nombreCompleto += ' ';
-                                    nombreCompleto += ` -- DNI: ${item.dni}`;
+                                    nombreCompleto += `-- DNI: ${item.dni}`;
                                 }
                                 
+                                // Si no se encontró ningún campo específico, usar propiedades genéricas
                                 if (!nombreCompleto) {
                                     const parts = [];
                                     for (const key in item) {
@@ -265,7 +286,7 @@ document.addEventListener('DOMContentLoaded', () => {
                         }
                     }
                 } else if (typeof datosJSON === 'object' && datosJSON !== null) {
-                    // Si es un objeto extraemos valores
+                    // Si es un objeto, intentamos extraer valores
                     participantes = Object.values(datosJSON)
                         .filter(val => typeof val === 'string' || typeof val === 'number')
                         .map(val => String(val));
@@ -288,37 +309,68 @@ document.addEventListener('DOMContentLoaded', () => {
 
     // Realizar sorteo
     function realizarSorteo() {
+        // Algoritmo Fisher-Yates para mezclar eficientemente
         const participantesAleatorios = [...participantes];
         let currentIndex = participantesAleatorios.length;
-
-
+    
+        // Mientras queden elementos a mezclar
         while (currentIndex !== 0) {
-
+            // Elegir un elemento restante
             const randomIndex = Math.floor(Math.random() * currentIndex);
             currentIndex--;
-
+    
+            // Intercambiar con el elemento actual
             [participantesAleatorios[currentIndex], participantesAleatorios[randomIndex]] = 
             [participantesAleatorios[randomIndex], participantesAleatorios[currentIndex]];
         }
         
         sorteoResultados = participantesAleatorios;
+        console.log("Sorteo completado. Resultados:", sorteoResultados);
         resultCurrentPage = 1;
         mostrarResultados();
         resultSection.style.display = 'block';
         
+        // Desplazar hacia abajo para ver resultados
         resultSection.scrollIntoView({ behavior: 'smooth' });
     }
 
-    addBtn.addEventListener('click', agregarParticipante);
-    nameInput.addEventListener('keypress', event => {
-        if (event.key === 'Enter') {
-            event.preventDefault();
-            agregarParticipante();
-        }
-    });
+    // Event listeners - Asegurarse de que los botones tengan sus listeners correctamente añadidos
+    if (addBtn) { // Solo si existe el botón
+        addBtn.addEventListener('click', agregarParticipante);
+    }
+    
+    if (nameInput) { // Solo si existe el campo de entrada
+        nameInput.addEventListener('keypress', event => {
+            if (event.key === 'Enter') {
+                event.preventDefault();
+                agregarParticipante();
+            }
+        });
+    }
+    
+    // Asegurarse de que los botones tengan sus listeners
     sortearBtn.addEventListener('click', realizarSorteo);
-    clearAllBtn.addEventListener('click', limpiarTodos);
-    loadJsonBtn.addEventListener('click', cargarDesdeJson);
+    
+    // Verificar que estos botones existan antes de añadir event listeners
+    if (clearAllBtn) {
+        clearAllBtn.addEventListener('click', limpiarTodos);
+        console.log("Botón 'Borrar todos' inicializado correctamente");
+    } else {
+        console.error("El botón 'Borrar todos' no se encuentra en el DOM");
+    }
+    
+    if (loadJsonBtn) {
+        loadJsonBtn.addEventListener('click', cargarDesdeJson);
+        console.log("Botón 'Cargar docentes' inicializado correctamente");
+    } else {
+        console.error("El botón 'Cargar docentes' no se encuentra en el DOM");
+    }
+    
+    // Añadir console.log para depuración
+    console.log("Script inicializado. Estado de los botones:");
+    console.log("- Sortear:", sortearBtn ? "Encontrado" : "No encontrado");
+    console.log("- Cargar docentes:", loadJsonBtn ? "Encontrado" : "No encontrado");
+    console.log("- Borrar todos:", clearAllBtn ? "Encontrado" : "No encontrado");
     
     // Inicializar UI
     actualizarListaParticipantes();
